@@ -6,11 +6,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminRoute } from "./components/AdminRoute";
+import { AppLayout } from "./components/layout/AppLayout";
 
 // Import pages
 import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,13 +27,25 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Auth />} />
             <Route path="/landing" element={<Index />} />
-            <Route path="/home" element={
+            <Route path="/auth" element={<Auth />} />
+            
+            {/* Protected routes with layout */}
+            <Route path="/dashboard" element={
               <ProtectedRoute>
-                <Home />
+                <AppLayout>
+                  <Dashboard />
+                </AppLayout>
               </ProtectedRoute>
             } />
-            <Route path="/auth" element={<Auth />} />
-            {/* Add more routes as needed */}
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Home />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
