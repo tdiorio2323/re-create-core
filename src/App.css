@@ -1,42 +1,46 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+import { framer, CanvasNode } from "framer-plugin"
+import { useState, useEffect } from "react"
+import "./App.css"
+
+framer.showUI({
+    position: "top right",
+    width: 240,
+    height: 95,
+})
+
+function useSelection() {
+    const [selection, setSelection] = useState<CanvasNode[]>([])
+
+    useEffect(() => {
+        return framer.subscribeToSelection(setSelection)
+    }, [])
+
+    return selection
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+export function App() {
+    const selection = useSelection()
+    const layer = selection.length === 1 ? "layer" : "layers"
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+    const handleAddSvg = async () => {
+        await framer.addSVG({
+            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#999" d="M20 0v8h-8L4 0ZM4 8h8l8 8h-8v8l-8-8Z"/></svg>`,
+            name: "Logo.svg",
+        })
+    }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+    return (
+        <main>
+            <p>
+                Welcome! Check out the{" "}
+                <a href="https://framer.com/developers/plugins/introduction" target="_blank">
+                    Docs
+                </a>{" "}
+                to start. You have {selection.length} {layer} selected.
+            </p>
+            <button className="framer-button-primary" onClick={handleAddSvg}>
+                Insert Logo
+            </button>
+        </main>
+    )
 }
